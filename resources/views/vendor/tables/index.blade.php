@@ -209,7 +209,7 @@ return null;
                     </x-tables::checkbox-cell>
                     @endif
                     @if (count($actions))
-                    <th class="w-5">Actions</th>
+                    <th class="w-5"></th>
                     @endif
                     @foreach ($columns as $column)
                     <x-tables::header-cell :extra-attributes="$column->getExtraHeaderAttributes()"

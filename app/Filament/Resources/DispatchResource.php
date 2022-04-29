@@ -88,11 +88,17 @@ class DispatchResource extends Resource
             ->defaultSort('schedule')
             ->columns([
                 Tables\Columns\TextColumn::make('bus_unit.code')->searchable()->label('Bus'),
+                Tables\Columns\BadgeColumn::make('status_name')
+                    ->colors([
+                        'warning' => 'Departed',
+                        'success' => 'Available',
+                    ])
+                    ->label('Status'),
+                Tables\Columns\TextColumn::make('current_passenger_capacity')->label('Capacity'),
                 Tables\Columns\TextColumn::make('dispatch_type.name')->label('Type'),
                 Tables\Columns\TextColumn::make('main_dispatch_route.dispatch_route_name')->label('Route'),
                 Tables\Columns\TextColumn::make('schedule')->dateTime('h:i A M j, Y')->sortable(),
-                Tables\Columns\TextColumn::make('status_name')->label('Status'),
-                Tables\Columns\TextColumn::make('current_passenger_capacity')->label('Capacity'),
+
             ])
             ->prependActions([
                 Tables\Actions\ButtonAction::make('book')

@@ -17,6 +17,7 @@ use App\Models\BusUnit;
 use App\Models\Dispatch;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Str;
 
 class BookingResource extends Resource
 {
@@ -35,10 +36,6 @@ class BookingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),
-                Tables\Columns\TextColumn::make('passenger.name')->searchable(),
-                Tables\Columns\TextColumn::make('dispatch.bus_unit.full_description')->label('Bus'),
-                Tables\Columns\TextColumn::make('dispatch_route.dispatch_route_name')->label('Route'),
                 Tables\Columns\BadgeColumn::make('status_name')
                     ->colors([
                         'danger' => 'REJECTED',
@@ -46,6 +43,15 @@ class BookingResource extends Resource
                         'success' => 'APPROVED',
                     ])
                     ->label('Status'),
+                Tables\Columns\TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
+                Tables\Columns\ImageColumn::make('proof_of_payment')
+                    ->url(fn ($record) => $record->proof_of_payment)
+                    ->label('Proof of Payment'),
+                Tables\Columns\TextColumn::make('reference_number')->searchable()->label('Reference Number'),
+                Tables\Columns\TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),
+                Tables\Columns\TextColumn::make('passenger.name')->searchable(),
+                Tables\Columns\TextColumn::make('dispatch.bus_unit.full_description')->label('Bus'),
+                Tables\Columns\TextColumn::make('dispatch_route.dispatch_route_name')->label('Route'),
                 Tables\Columns\TextColumn::make('dispatch.schedule')
                     ->label('Schedule')
                     ->sortable()
@@ -53,11 +59,7 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Booked at')
                     ->dateTime('h:i A M d, Y'),
-                Tables\Columns\TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
-                Tables\Columns\ImageColumn::make('proof_of_payment')
-                    ->url(fn ($record) => '/storage' . $record->proof_of_payment)
-                    ->label('Proof of Payment'),
-                Tables\Columns\TextColumn::make('reference_number')->searchable()->label('Reference Number'),
+
             ])
             ->defaultSort('dispatch.schedule')
             ->prependActions([
@@ -66,9 +68,10 @@ class BookingResource extends Resource
                     ->action(function (Booking $record, array $data) {
                         $record->update([
                             'status' => $data['status'],
-                            'remarks' => $data['remarks']
+                            'remarks' => $data['remarks'],
+                            'secret' => $data['status'] == Booking::APPROVED ? Str::random(8) : null,
                         ]);
-                        Filament::notify('success', 'Booking approved.');
+                        Filament::notify('success', 'Booking status updated.');
                     })
                     ->color('warning')
                     ->icon('heroicon-o-adjustments')
@@ -88,7 +91,9 @@ class BookingResource extends Resource
                     Booking::APPROVED => 'Approved',
                     Booking::REJECTED => 'Rejected',
                     Booking::CLAIMED => 'Claimed',
-                ])->label('Booking Status'),
+                ])
+                    ->default(Booking::PENDING)
+                    ->label('Booking Status'),
                 Filter::make('dispatch_status_filter')->form([
                     Forms\Components\Select::make('dispatch_status')->options([
                         0 => 'All',

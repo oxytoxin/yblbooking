@@ -2,22 +2,28 @@
 
 namespace App\Http\Livewire\Passenger;
 
-use Akaunting\Money\Money;
 use App\Models\Booking;
+use Livewire\Component;
 use App\Models\Dispatch;
+use Akaunting\Money\Money;
+use App\Models\BusUnit;
+use Illuminate\Support\Str;
 use App\Models\DispatchRoute;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Actions\ButtonAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\Placeholder;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
-use Livewire\Component;
+use Filament\Tables\Filters\MultiSelectFilter;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class PassengerDispatches extends Component implements HasTable
 {
@@ -29,26 +35,54 @@ class PassengerDispatches extends Component implements HasTable
         return view('livewire.passenger.passenger-dispatches');
     }
 
-    public function showAlert()
-    {
-        $this->alert('success', 'Dispatch successfully booked.');
-    }
-
-
     protected function getTableQuery(): Builder
     {
-        return Dispatch::query()->where('status', Dispatch::AVAILABLE);
+        return Dispatch::query();
     }
 
     protected function getTableColumns(): array
     {
         return [
-            TextColumn::make('current_passenger_capacity')->label('Capacity'),
-            TextColumn::make('dispatch_type.name')->label('Type'),
+            TextColumn::make('current_passenger_capacity')->sortable(['passengers_count'])->label('Capacity'),
+            TextColumn::make('main_dispatch_route.fare')->money('php', true)->sortable()->label('Fare'),
+            TextColumn::make('schedule')->dateTime('h:i A M d, Y')->sortable(),
             TextColumn::make('bus_unit.full_description')->label('Bus Unit'),
+            TextColumn::make('dispatch_type.name')->label('Type'),
             TextColumn::make('main_dispatch_route.dispatch_route_name')->label('Route'),
-            TextColumn::make('schedule')->dateTime('h:i A M d, Y'),
-            TextColumn::make('main_dispatch_route.fare')->money('php', true)->label('Fare'),
+        ];
+    }
+
+    public function getTableFilters()
+    {
+        return [
+            MultiSelectFilter::make('dispatch_route_id')
+                ->options(function () {
+                    return DispatchRoute::get()->mapWithKeys(fn ($dr) => [$dr->id => $dr->dispatch_route_name])->toArray();
+                })
+                ->label('Route'),
+            MultiSelectFilter::make('bus_unit_id')
+                ->options(function () {
+                    return BusUnit::get()->mapWithKeys(fn ($bu) => [$bu->id => $bu->full_description])->toArray();
+                })->column('bus_unit.id')
+                ->label('Bus Unit'),
+            SelectFilter::make('status')->options([
+                Dispatch::AVAILABLE => 'Available',
+                Dispatch::DEPARTED => 'Departed'
+            ])->default(Dispatch::AVAILABLE),
+            Filter::make('schedule')->form([
+                DatePicker::make('schedule_from'),
+                DatePicker::make('schedule_until'),
+            ])->query(function (Builder $query, array $data): Builder {
+                return $query
+                    ->when(
+                        $data['schedule_from'],
+                        fn (Builder $query, $date): Builder => $query->whereDate('schedule', '>=', $date),
+                    )
+                    ->when(
+                        $data['schedule_until'],
+                        fn (Builder $query, $date): Builder => $query->whereDate('schedule', '<=', $date),
+                    );
+            })
         ];
     }
 
@@ -60,15 +94,17 @@ class PassengerDispatches extends Component implements HasTable
                 ->action(function ($record, $data) {
                     $route = $data['booking_dispatch_route_id'] ?? $record->dispatch_route_id;
                     Booking::create([
+                        'secret' => \Str::random(8),
                         'transaction_id' => \Str::uuid(),
                         'user_id' => auth()->id(),
                         'dispatch_id' => $record->id,
                         'dispatch_route_id' => $route,
                         'reference_number' => $data['reference_number'],
-                        'proof_of_payment' => '/storage/' . $data['proof_of_payment'],
+                        'proof_of_payment' => $data['proof_of_payment'],
                     ]);
                     $this->alert('success', 'Dispatch successfully booked.');
                 })
+                ->hidden(fn ($record) => Dispatch::DEPARTED == $record->status)
                 ->form(function ($record) {
                     if ($record->available_dispatch_routes()->count()) {
                         return [
