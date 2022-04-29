@@ -37,7 +37,7 @@
                     @if ($booking->status == \App\Models\Booking::APPROVED)
                     <div x-cloak x-data x-init="
                         $nextTick(() => { 
-                            new QRCode($refs.qrc, '{{ $booking->secret .'-'. $booking->transaction_id }}');
+                            new QRCode($refs.qrc, '{{ $booking->transaction_id }}');
                         })
                     " class="lg:w-1/2 flex justify-center w-full">
                         <div x-ref="qrc"></div>

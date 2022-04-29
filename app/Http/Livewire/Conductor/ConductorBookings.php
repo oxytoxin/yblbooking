@@ -1,39 +1,39 @@
 <?php
 
-namespace App\Http\Livewire\Passenger;
+namespace App\Http\Livewire\Conductor;
 
+use Closure;
 use App\Models\Booking;
-use App\Models\BusUnit;
 use Livewire\Component;
 use App\Models\Dispatch;
 use App\Models\DispatchRoute;
-use Closure;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Jantinnerezo\LivewireAlert\LivewireAlert;
-use Filament\Tables\Filters\MultiSelectFilter;
+use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\MultiSelectFilter;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
-class PassengerBookings extends Component implements HasTable
+class ConductorBookings extends Component  implements HasTable
 {
     use InteractsWithTable, LivewireAlert;
 
     protected function getTableQuery(): Builder
     {
-        return Booking::query()->where('user_id', auth()->id());
+        return Booking::query();
     }
 
 
     protected function getTableRecordUrlUsing(): Closure
     {
-        return fn (Booking $record): string => route('passenger.view_booking', ['booking' => $record]);
+        return fn (Booking $record): string => route('conductor.view_booking', ['booking' => $record]);
     }
 
     protected function getTableColumns(): array
@@ -66,6 +66,21 @@ class PassengerBookings extends Component implements HasTable
         ];
     }
 
+    public function getTableActions()
+    {
+        return [
+            ButtonAction::make('claim')
+                ->action(function ($record) {
+                    $record->update([
+                        'status' => Booking::CLAIMED
+                    ]);
+                    $this->alert('success', 'Booking was claimed successfully for passenger.');
+                })
+                ->requiresConfirmation()
+                ->color('success'),
+        ];
+    }
+
     public function getTableFilters()
     {
         return [
@@ -75,6 +90,7 @@ class PassengerBookings extends Component implements HasTable
                 Booking::REJECTED => 'Rejected',
                 Booking::CLAIMED => 'Claimed',
             ])
+                ->default(Booking::APPROVED)
                 ->label('Booking Status'),
             Filter::make('dispatch_status_filter')->form([
                 Select::make('dispatch_status')->options([
@@ -119,6 +135,6 @@ class PassengerBookings extends Component implements HasTable
 
     public function render()
     {
-        return view('livewire.passenger.passenger-bookings');
+        return view('livewire.conductor.conductor-bookings');
     }
 }

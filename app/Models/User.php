@@ -60,6 +60,33 @@ class User extends Authenticatable implements FilamentUser
     {
         return match ($this->role_id) {
             Role::ADMIN => [],
+            Role::CONDUCTOR => [
+                '' => [
+                    'collapsible' => false,
+                    'items' => [
+                        [
+                            'group' => null,
+                            'active' => $route == 'conductor.dashboard',
+                            'icon' => "heroicon-o-template",
+                            'label' => "Dashboard",
+                            'badge' => null,
+                            'shouldOpenUrlInNewTab' => false,
+                            'sort' => null,
+                            'url' => route('conductor.dashboard'),
+                        ],
+                        [
+                            'group' => null,
+                            'active' => $route == 'conductor.bookings',
+                            'icon' => "heroicon-o-ticket",
+                            'label' => "Bookings",
+                            'badge' => null,
+                            'shouldOpenUrlInNewTab' => false,
+                            'sort' => null,
+                            'url' => route('conductor.bookings'),
+                        ],
+                    ],
+                ],
+            ],
             Role::PASSENGER => [
                 '' => [
                     'collapsible' => false,

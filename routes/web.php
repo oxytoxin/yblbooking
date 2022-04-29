@@ -10,10 +10,14 @@ use App\Http\Livewire\Auth\Passwords\Email;
 use App\Http\Livewire\Auth\Passwords\Reset;
 use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\Auth\Verify;
+use App\Http\Livewire\Conductor\ConductorBookings;
+use App\Http\Livewire\Conductor\ConductorDashboard;
+use App\Http\Livewire\Conductor\ConductorViewBooking;
 use App\Http\Livewire\Passenger\PassengerBookings;
 use App\Http\Livewire\Passenger\PassengerDispatches;
 use App\Http\Livewire\Passenger\PassengerFareMatrix;
 use App\Http\Livewire\Passenger\PassengerViewBooking;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,7 +65,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth'])
+Route::middleware(['auth', "role_id:" . Role::PASSENGER])
     ->name('passenger.')
     ->prefix('passenger')
     ->group(function () {
@@ -69,4 +73,13 @@ Route::middleware(['auth'])
         Route::get('dispatches', PassengerDispatches::class)->name('dispatches');
         Route::get('bookings', PassengerBookings::class)->name('bookings');
         Route::get('booking/{booking}', PassengerViewBooking::class)->name('view_booking');
+    });
+
+Route::middleware(['auth', "role_id:" . Role::CONDUCTOR])
+    ->name('conductor.')
+    ->prefix('conductor')
+    ->group(function () {
+        Route::get('dashboard', ConductorDashboard::class)->name('dashboard');
+        Route::get('bookings', ConductorBookings::class)->name('bookings');
+        Route::get('booking/{booking}', ConductorViewBooking::class)->name('view_booking');
     });

@@ -41,6 +41,14 @@ class DatabaseSeeder extends Seeder
             'birthday' => today(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
         ]);
+        User::create([
+            'role_id' => Role::CONDUCTOR,
+            'name' => 'Joshua Paderes',
+            'email' => 'joshuapaderes@gmail.com',
+            'address' => 'Koronadal City',
+            'birthday' => today(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+        ]);
         $this->call(BookingSeeder::class);
     }
 }

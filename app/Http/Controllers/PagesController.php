@@ -10,9 +10,11 @@ class PagesController extends Controller
     {
         switch (auth()->user()->role_id) {
             case 1:
-                return redirect()->route('filament.pages.dashboard');
+                return redirect(route('filament.pages.dashboard'));
                 break;
-
+            case 2:
+                return redirect(route('conductor.dashboard'));
+                break;
             case 3:
                 return redirect(route('passenger.fare_matrix'));
                 break;

@@ -69,7 +69,6 @@ class BookingResource extends Resource
                         $record->update([
                             'status' => $data['status'],
                             'remarks' => $data['remarks'],
-                            'secret' => $data['status'] == Booking::APPROVED ? Str::random(8) : null,
                         ]);
                         Filament::notify('success', 'Booking status updated.');
                     })
