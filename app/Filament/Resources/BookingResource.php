@@ -45,7 +45,7 @@ class BookingResource extends Resource
                     ->label('Status'),
                 Tables\Columns\TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
                 Tables\Columns\ImageColumn::make('proof_of_payment')
-                    ->url(fn ($record) => $record->proof_of_payment)
+                    ->url(fn ($record) => '/storage/' . $record->proof_of_payment)
                     ->label('Proof of Payment'),
                 Tables\Columns\TextColumn::make('reference_number')->searchable()->label('Reference Number'),
                 Tables\Columns\TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),

@@ -13,7 +13,12 @@ class Dispatch extends Model
     const DEPARTED = 2;
 
     protected $appends = ['current_passenger_capacity'];
+
     protected $with = ['bus_unit'];
+
+    protected $casts = [
+        'schedule' => 'immutable_datetime'
+    ];
 
     public function main_dispatch_route()
     {

@@ -7,6 +7,7 @@ use App\Models\BusUnit;
 use Livewire\Component;
 use App\Models\Dispatch;
 use App\Models\DispatchRoute;
+use Closure;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -29,6 +30,12 @@ class PassengerBookings extends Component implements HasTable
         return Booking::query()->where('user_id', auth()->id());
     }
 
+
+    protected function getTableRecordUrlUsing(): Closure
+    {
+        return fn (Booking $record): string => route('passenger.view_booking', ['booking' => $record]);
+    }
+
     protected function getTableColumns(): array
     {
         return [
@@ -41,7 +48,7 @@ class PassengerBookings extends Component implements HasTable
                 ->label('Status'),
             TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
             ImageColumn::make('proof_of_payment')
-                ->url(fn ($record) => $record->proof_of_payment)
+                ->url(fn ($record) => '/storage/' . $record->proof_of_payment)
                 ->label('Proof of Payment'),
             TextColumn::make('reference_number')->searchable()->label('Reference Number'),
             TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),
@@ -67,7 +74,6 @@ class PassengerBookings extends Component implements HasTable
                 Booking::REJECTED => 'Rejected',
                 Booking::CLAIMED => 'Claimed',
             ])
-                ->default(Booking::PENDING)
                 ->label('Booking Status'),
             Filter::make('dispatch_status_filter')->form([
                 Select::make('dispatch_status')->options([

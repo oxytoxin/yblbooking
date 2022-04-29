@@ -14,6 +14,7 @@ class Booking extends Model
     const REJECTED = 3;
     const CLAIMED = 4;
 
+
     public function statusName(): Attribute
     {
         return new Attribute(get: fn ($value) => match ($this->status) {

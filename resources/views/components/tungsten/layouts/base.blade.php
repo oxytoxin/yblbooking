@@ -14,6 +14,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
+    <script src="{{ asset('js/qrcode.js') }}"></script>
 
     @livewireStyles
 

@@ -13,6 +13,7 @@ use App\Http\Livewire\Auth\Verify;
 use App\Http\Livewire\Passenger\PassengerBookings;
 use App\Http\Livewire\Passenger\PassengerDispatches;
 use App\Http\Livewire\Passenger\PassengerFareMatrix;
+use App\Http\Livewire\Passenger\PassengerViewBooking;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -67,4 +68,5 @@ Route::middleware(['auth'])
         Route::get('fare_matrix', PassengerFareMatrix::class)->name('fare_matrix');
         Route::get('dispatches', PassengerDispatches::class)->name('dispatches');
         Route::get('bookings', PassengerBookings::class)->name('bookings');
+        Route::get('booking/{booking}', PassengerViewBooking::class)->name('view_booking');
     });
