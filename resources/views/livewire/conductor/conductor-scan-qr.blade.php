@@ -4,7 +4,7 @@
             scanner = new QrScanner(
                 $refs.stream, 
                 result => {
-                    window.location.href = '/conductor/bookings/'+result.data;
+                    window.location.href = '/conductor/booking/'+result.data;
                 },
                 {
                     returnDetailedScanResult: true,
