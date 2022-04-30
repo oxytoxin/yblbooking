@@ -26,6 +26,12 @@
                             <span class="ml-auto text-gray-900">{{ $booking->created_at->format('h:i A M d, Y')
                                 }}</span>
                         </div>
+                        @if ($booking->remarks)
+                        <div class="border-t border-b border-gray-200 py-2">
+                            <h4 class="text-gray-500">Remarks</h4>
+                            <h4 class="indent-4 text-gray-900 prose">{{ $booking->remarks }}</h4>
+                        </div>
+                        @endif
                         <div class="flex my-4 justify-center">
                             <span class="title-font font-medium text-2xl text-gray-900">{{
                                 Akaunting\Money\Money::PHP($booking->dispatch_route->fare, true) }}</span>

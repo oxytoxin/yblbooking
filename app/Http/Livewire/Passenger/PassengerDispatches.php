@@ -94,7 +94,6 @@ class PassengerDispatches extends Component implements HasTable
                 ->action(function ($record, $data) {
                     $route = $data['booking_dispatch_route_id'] ?? $record->dispatch_route_id;
                     Booking::create([
-                        'secret' => \Str::random(8),
                         'transaction_id' => \Str::uuid(),
                         'user_id' => auth()->id(),
                         'dispatch_id' => $record->id,

@@ -49,7 +49,7 @@ class PassengerBookings extends Component implements HasTable
                 ->label('Status'),
             TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
             ImageColumn::make('proof_of_payment')
-                ->url(fn ($record) => '/storage/' . $record->proof_of_payment)
+                ->url(fn ($record) => $record->proof_of_payment ? ('/storage/' . $record->proof_of_payment) : null)
                 ->label('Proof of Payment'),
             TextColumn::make('reference_number')->searchable()->label('Reference Number'),
             TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),

@@ -45,7 +45,7 @@ class BookingResource extends Resource
                     ->label('Status'),
                 Tables\Columns\TextColumn::make('dispatch_route.fare')->money('php', shouldConvert: true)->label('Fare'),
                 Tables\Columns\ImageColumn::make('proof_of_payment')
-                    ->url(fn ($record) => '/storage/' . $record->proof_of_payment)
+                    ->url(fn ($record) => $record->proof_of_payment ? ('/storage/' . $record->proof_of_payment) : null)
                     ->label('Proof of Payment'),
                 Tables\Columns\TextColumn::make('reference_number')->searchable()->label('Reference Number'),
                 Tables\Columns\TextColumn::make('transaction_id')->label('Transaction ID')->searchable(),
@@ -74,15 +74,17 @@ class BookingResource extends Resource
                     })
                     ->color('warning')
                     ->icon('heroicon-o-adjustments')
-                    ->form([
-                        Forms\Components\Radio::make('status')->options([
-                            Booking::PENDING => 'Pending',
-                            Booking::APPROVED => 'Approve',
-                            Booking::REJECTED => 'Reject'
-                        ])
-                            ->default(Booking::APPROVED),
-                        Forms\Components\Textarea::make('remarks'),
-                    ]),
+                    ->form(function ($record) {
+                        return [
+                            Forms\Components\Radio::make('status')->options([
+                                Booking::PENDING => 'Pending',
+                                Booking::APPROVED => 'Approve',
+                                Booking::REJECTED => 'Reject'
+                            ])
+                                ->default(Booking::APPROVED),
+                            Forms\Components\Textarea::make('remarks')->default($record->remarks),
+                        ];
+                    }),
             ])
             ->filters([
                 SelectFilter::make('status')->options([
