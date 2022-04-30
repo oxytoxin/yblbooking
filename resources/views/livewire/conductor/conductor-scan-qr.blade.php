@@ -14,5 +14,5 @@
             scanner.start();
         })
         ">
-    <video autoplay x-ref="stream"></video>
+    <video autoplay muted x-ref="stream"></video>
 </div>
