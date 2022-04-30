@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Illuminate\Support\Facades\Hash;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\EditRecord;
 
