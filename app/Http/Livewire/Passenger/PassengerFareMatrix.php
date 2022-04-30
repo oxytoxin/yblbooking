@@ -16,10 +16,10 @@ class PassengerFareMatrix extends Component
     {
         $dispatch_routes = DispatchRoute::query()
             ->when($this->tableSearchQuery, function (Builder $query) {
-                $query->whereRelation('origin', 'name', "%{$this->tableSearchQuery}%%");
+                $query->whereRelation('origin', 'name', "%{$this->tableSearchQuery}%");
             })
             ->when($this->tableSearchQuery, function (Builder $query) {
-                $query->whereRelation('origin', 'name', "%{$this->tableSearchQuery}%%");
+                $query->orWhereRelation('destination', 'name', "%{$this->tableSearchQuery}%");
             })
             ->get();
         return view('livewire.passenger.passenger-fare-matrix', [
