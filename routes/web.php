@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 });
 
+Route::get('download-app', [PagesController::class, 'download_app'])->name('download_app');
 
 Route::middleware(['auth', "role_id:" . Role::PASSENGER])
     ->name('passenger.')
