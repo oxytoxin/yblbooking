@@ -43,7 +43,10 @@
                         @endif
                     </div>
                     @if ($booking->status == \App\Models\Booking::APPROVED)
-                    <button class="btn-primary btn px-16 ml-auto" wire:click="claimBooking">CLAIM</button>
+                    <button class="btn-primary btn px-16 ml-auto" wire:click="claimBooking">
+                        <x-heroicon-o-cube-transparent class="w-8 mx-2 animate-spin" wire:loading />
+                        CLAIM
+                    </button>
                     @endif
                 </div>
             </div>

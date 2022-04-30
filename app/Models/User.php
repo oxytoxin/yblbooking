@@ -93,6 +93,16 @@ class User extends Authenticatable implements FilamentUser
                     'items' => [
                         [
                             'group' => null,
+                            'active' => $route == 'passenger.dashboard',
+                            'icon' => "heroicon-o-template",
+                            'label' => "Dashboard",
+                            'badge' => null,
+                            'shouldOpenUrlInNewTab' => false,
+                            'sort' => null,
+                            'url' => route('passenger.dashboard'),
+                        ],
+                        [
+                            'group' => null,
                             'active' => $route == 'passenger.fare_matrix',
                             'icon' => "heroicon-o-cash",
                             'label' => "Fare Matrix",

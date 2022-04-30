@@ -93,15 +93,19 @@ class PassengerDispatches extends Component implements HasTable
                 ->icon('heroicon-o-ticket')
                 ->action(function ($record, $data) {
                     $route = $data['booking_dispatch_route_id'] ?? $record->dispatch_route_id;
-                    Booking::create([
-                        'transaction_id' => \Str::uuid(),
-                        'user_id' => auth()->id(),
-                        'dispatch_id' => $record->id,
-                        'dispatch_route_id' => $route,
-                        'reference_number' => $data['reference_number'],
-                        'proof_of_payment' => $data['proof_of_payment'],
-                    ]);
-                    $this->alert('success', 'Dispatch successfully booked.');
+                    if ($record->current_passenger_capacity < $record->bus_unit->passenger_capacity) {
+                        Booking::create([
+                            'transaction_id' => \Str::uuid(),
+                            'user_id' => auth()->id(),
+                            'dispatch_id' => $record->id,
+                            'dispatch_route_id' => $route,
+                            'reference_number' => $data['reference_number'],
+                            'proof_of_payment' => $data['proof_of_payment'],
+                        ]);
+                        $this->alert('success', 'Dispatch successfully booked.');
+                    } else {
+                        $this->alert('error', 'This dispatch is fully booked.');
+                    }
                 })
                 ->hidden(fn ($record) => Dispatch::DEPARTED == $record->status)
                 ->form(function ($record) {

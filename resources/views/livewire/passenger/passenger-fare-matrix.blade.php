@@ -1,6 +1,9 @@
 <div>
     <x-tungsten.header heading="Fare Matrix" />
-    <section class="text-gray-600 body-font">
+    <div class="max-w-lg ml-auto">
+        <x-tungsten.search-input />
+    </div>
+    <section class="text-gray-600 mt-4 body-font">
         <div class="container mx-auto">
             <div class="flex flex-wrap -m-4">
                 @foreach ($dispatch_routes as $dispatch_route)

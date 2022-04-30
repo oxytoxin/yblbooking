@@ -16,7 +16,7 @@ class PagesController extends Controller
                 return redirect(route('conductor.dashboard'));
                 break;
             case 3:
-                return redirect(route('passenger.fare_matrix'));
+                return redirect(route('passenger.dashboard'));
                 break;
             default:
                 # code...
