@@ -13,6 +13,7 @@ use App\Http\Livewire\Auth\Verify;
 use App\Http\Livewire\Conductor\ConductorAnnouncement;
 use App\Http\Livewire\Conductor\ConductorBookings;
 use App\Http\Livewire\Conductor\ConductorDashboard;
+use App\Http\Livewire\Conductor\ConductorDispatches;
 use App\Http\Livewire\Conductor\ConductorScanQR;
 use App\Http\Livewire\Conductor\ConductorViewBooking;
 use App\Http\Livewire\Passenger\PassengerAnnouncement;
@@ -87,6 +88,7 @@ Route::middleware(['auth', "role_id:" . Role::CONDUCTOR])
     ->prefix('conductor')
     ->group(function () {
         Route::get('dashboard', ConductorDashboard::class)->name('dashboard');
+        Route::get('dispatches', ConductorDispatches::class)->name('dispatches');
         Route::get('bookings', ConductorBookings::class)->name('bookings');
         Route::get('scanqr', ConductorScanQR::class)->name('scanqr');
         Route::get('booking/{booking:transaction_id}', ConductorViewBooking::class)->name('view_booking');
